@@ -16,7 +16,6 @@ class atom:
         # hvilken ladning har den
         return True
 
-
 """
 class lattice:
     def __init__(self):

@@ -36,11 +36,13 @@ class linked:
                 __id = entry[0]
                 # do not link an attr to itself
                 if __id == _id:
-                    raise ValueError("Attribute link error.")
+                    raise ValueError( \
+                        "Attribute link error.")
                 _list.append(__id)
         self.data[_id][1] = _list
 
-    # return all occurences that has attribute value in column col
+    # return all occurences that has attribute 
+    # value in column col
     def get_attr(self, col, value):
         temp = []
         for entry in self.data:
@@ -56,7 +58,8 @@ class linked:
             _list.append(self.data[__id])
         return _list
 
-    # return all ids that has attribute value in column col
+    # return all ids that has attribute value 
+    # in column col
     def search(self, col, value):
         temp = []
         for entry in self.data:

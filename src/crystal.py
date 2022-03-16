@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from param import *
+from linked import linked
 
 
 T = np.array([[0.5,0.5,0.0],
@@ -42,6 +43,11 @@ class Crystal:
         # oblique fcc primitive cell. The
         # anion-cation bond is an eigenvector
         
+        """
+        Her setter vi inn endrig for å endre fasongen til 
+        krystallen. Istedenfor padding, gjør sett in pbc
+        """
+
         # add padding by 2 atom layers, n = n + 2
         self.n = n; self.n += 2
         self.lattice = np.zeros((self.n,self.n,self.n,3))
@@ -56,6 +62,11 @@ class Crystal:
         # list of coordinates
         attribs = []
 
+        """
+        Her må vi endre, evt fjerne molekyler 
+        som er utenfor en bounding box
+        """
+
         # insert cation and anions at each lattice vertex
         for vertex in self.lattice.reshape(self.n**3,3):
             x,y,z = vertex
@@ -64,6 +75,12 @@ class Crystal:
             #cation coords, anion F
             attribs.append([[x + 0.25,y + 0.25,z + 0.25],
                             False,vertex.tolist()])
+
+        """
+        Her linker vi atomer. Endre slik at atomet linker til 
+        de fire nermeste atomene. Linkingen ma vaere en 
+        separat metode slik at den brukes når atomer flyttes
+        """
 
         #instanciate a linked attributes object
         self.atom = linked(attribs)
@@ -83,6 +100,11 @@ class Crystal:
                                      [x+0.25,y+0.25,z-0.25],
                                      [x-0.25,y+0.25,z+0.25],
                                      [x+0.25,y-0.25,z+0.25]])
+
+    """
+    Burde stå før linking. Call linkingen pa nytt etter
+    at atomet er flyttet
+    """
 
     # perturb elements in the primitive cell
     def perturb(self, cell, anion, shift):
