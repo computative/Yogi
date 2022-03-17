@@ -252,6 +252,12 @@ class Crystal:
     # benchmarked: - orbital count correct
     #              - linking appears ok
     #              - species appears ok
+
+    # lager en lenket liste hvor hver linje er et elektron.
+    # Elektronet er linket til elektroner som ligger 
+    # ved korrekte posisjoner
+
+
     def add_orbitals(self):
         attribs = []
         #for entry in self.atom.data:
