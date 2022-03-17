@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from param import *
 from linked import linked
+from box import Box
 
 
 T = np.array([[0.5,0.5,0.0],
@@ -37,6 +38,11 @@ class entries:
 
 class Crystal:
 
+    """
+    Gamma pt periodic boundary condition is to set k = 0
+    and solve secular eqn for 
+    """
+
     def __init__(self,n):
 
         # linear transformation of a cube to
@@ -48,15 +54,16 @@ class Crystal:
         krystallen. Istedenfor padding, gjør sett in pbc
         """
 
-        # add padding by 2 atom layers, n = n + 2
-        self.n = n; self.n += 2
-        self.lattice = np.zeros((self.n,self.n,self.n,3))
-        for i in range(self.n):
-            for j in range(self.n):
-                for k in range(self.n):
-                    self.lattice[i,j,k] = np.dot(T,np.array([i,j,k]))
+        self.settings = {"crystal_dim": (1,1), "" }
+
+        self.bounding_box = Box(self.settings["BoundingBox"])
+
+        self.lattice = self._make_latice()
+
         add_nuclei()
         add_orbitals()
+
+    def make_latticepts
 
     def add_nuclei(self):
         # list of coordinates
