@@ -43,7 +43,7 @@ class Crystal:
     and solve secular eqn for 
     """
 
-    def __init__(self,n):
+    def __init__(self, n):
 
         # linear transformation of a cube to
         # oblique fcc primitive cell. The
@@ -54,16 +54,104 @@ class Crystal:
         krystallen. Istedenfor padding, gjør sett in pbc
         """
 
-        self.settings = {"crystal_dim": (1,1), "" }
+        self.settings = {"dims": (1,1,1), "struct": "diamond" }
+        
+        self.nuclei = self._nuclei_struct(
+                self.settings["dims"], self.settings["struct"]
+            )
 
-        self.bounding_box = Box(self.settings["BoundingBox"])
+        self.bond = self._bond(self.nuclei)
 
-        self.lattice = self._make_latice()
 
-        add_nuclei()
-        add_orbitals()
+        #add_nuclei()
+        #add_orbitals()
+        
+    def _nuclei_struct(self, dims, struct):
 
-    def make_latticepts
+        coords = []
+        # multiply the cell made by self._cell()
+        for i in range( dims[0] ):
+            for j in range( dims[1] ):
+                for k in range( dims[2] ):
+                    coords.extend(self._cell(struct))
+
+
+    def _bond(self, coords):
+        """
+        work
+        """
+        #instanciate a linked attributes object
+        self.atom = linked(attribs)
+        for entry in self.atom:
+        #for entry in self.atom.data:
+            x, y, z = entry[2][0]
+            _id = entry[0]
+            if entry[2][1] == 1: # if anion
+                self.atom.link_attr(_id,0,
+                                    [[x+0.25,y+0.25,z+0.25],
+                                     [x+0.25,y-0.25,z-0.25],
+                                     [x-0.25,y-0.25,z+0.25],
+                                     [x-0.25,y+0.25,z-0.25]])
+            else:                # if cation
+                self.atom.link_attr(_id,0,
+                                    [[x-0.25,y-0.25,z-0.25],
+                                     [x+0.25,y+0.25,z-0.25],
+                                     [x-0.25,y+0.25,z+0.25],
+                                     [x+0.25,y-0.25,z+0.25]])
+
+
+    def add_nuclei(self):
+        # list of coordinates
+        attribs = []
+
+        """
+        Her må vi endre, evt fjerne molekyler 
+        som er utenfor en bounding box
+        """
+
+        # insert cation and anions at each lattice vertex
+        for vertex in self.lattice.reshape(self.n**3,3):
+            x,y,z = vertex
+            # anion coords, anion T
+            attribs.append([[x,y,z],True,vertex.tolist()])
+            #cation coords, anion F
+            attribs.append([[x + 0.25,y + 0.25,z + 0.25],
+                            False,vertex.tolist()])
+
+        """
+        Her linker vi atomer. Endre slik at atomet linker til 
+        de fire nermeste atomene. Linkingen ma vaere en 
+        separat metode slik at den brukes når atomer flyttes
+        """
+
+        #instanciate a linked attributes object
+        self.atom = linked(attribs)
+        for entry in self.atom:
+        #for entry in self.atom.data:
+            x, y, z = entry[2][0]
+            _id = entry[0]
+            if entry[2][1] == 1: # if anion
+                self.atom.link_attr(_id,0,
+                                    [[x+0.25,y+0.25,z+0.25],
+                                     [x+0.25,y-0.25,z-0.25],
+                                     [x-0.25,y-0.25,z+0.25],
+                                     [x-0.25,y+0.25,z-0.25]])
+            else:                # if cation
+                self.atom.link_attr(_id,0,
+                                    [[x-0.25,y-0.25,z-0.25],
+                                     [x+0.25,y+0.25,z-0.25],
+                                     [x-0.25,y+0.25,z+0.25],
+                                     [x+0.25,y-0.25,z+0.25]])
+
+
+    def make_grid(self):
+        # add padding by 2 atom layers, n = n + 2
+        self.n = n; self.n += 2
+        lattice = np.zeros((self.n,self.n,self.n,3))
+        for i in range(self.n):
+            for j in range(self.n):
+                for k in range(self.n):
+                    self.lattice[i,j,k] = np.dot(T,np.array([i,j,k]))
 
     def add_nuclei(self):
         # list of coordinates
