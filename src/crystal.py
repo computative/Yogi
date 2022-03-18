@@ -67,7 +67,16 @@ class Crystal:
         #add_orbitals()
         
     def _nuclei_struct(self, dims, struct):
+        pass
 
+
+    """
+    Hver struktur faar en egen metode. Senere ma jeg
+    forene dem i et felles rammeverk
+    """
+
+    def _diamond(self,dims,struct):
+        
         coords = []
         # multiply the cell made by self._cell()
         for i in range( dims[0] ):
