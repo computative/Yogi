@@ -6,7 +6,7 @@ class Crystal:
 
     def __init__(self):
 
-        self.settings = {"dims": (2,2,2), 
+        self.settings = {"dims": (1,1,1), 
                     "struct": {"type": "diamond", 
                                "spp": ["Si","Si"] },
                     "colors": {"Si": "grey"},
@@ -19,7 +19,7 @@ class Crystal:
         else:
             print("E: Structure not found")
     
-        self.plot(show_ids=False)
+        self.plot(show_ids=True, show_spheres = False)
 
     
     # Hver struktur faar en egen metode. Senere ma jeg
@@ -43,20 +43,20 @@ class Crystal:
         for i in range( nx ):
             for j in range( ny ):
                 for k in range( nz ):
-                    for sp in np.unique(
-                        np.array(self.settings["struct"]["spp"])):
-                        # end_plate sees
-                        end_plate =  np.argwhere(
-                            np.array([nx - i,ny - j,nz - k]) == 1 )
-                        origin = (i,j,k)
-                        cell, added = Cell(origin, start_Id,
-                            species,end_plate)
+                    # end_plate sees
+                    end_plate =  np.argwhere(
+                        np.array([nx - i,ny - j,nz - k]) == 1 ).T[0]
+                    origin = (i,j,k)
+                    cell, added = Cell(origin, start_Id,
+                        species, end_plate)
+                    start_Id += added
+                    for sp in np.unique(np.array(
+                            self.settings["struct"]["spp"])):
                         nuclei[sp].update(cell[sp])
-                        start_Id += added
         return nuclei
 
 
-    def plot(self, show_ids):
+    def plot(self, show_ids, show_spheres):
         # gi et bilde av krystallen med id-tekst isteden-
         # for kule. Forskjellige farger avhengig av 
         # element-type
@@ -76,7 +76,8 @@ class Crystal:
                 label = str(Id)
                 if show_ids:
                     ax.text(x, y, z, label, color = col)
-                ax.scatter(x,y,z,color=col)
+                if show_spheres:
+                    ax.scatter(x,y,z,color=col)
 
         # Tweaking display region and labels
         #ax.set_xlim(-1, 2)
