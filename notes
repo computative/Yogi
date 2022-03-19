@@ -1,0 +1,5 @@
+nucli are stored in dictionary: 
+    {species1 : {1 : coord, ..., n : coord}
+     ,...,
+     speciesN : {1 : coord, ..., n : coord}}
+settings stored in dictionary: color, unit cell type and species
