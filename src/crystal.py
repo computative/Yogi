@@ -1,14 +1,13 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 class Crystal:
 
-    def __init__(self):
+    def __init__(self,dim,struct):
 
-        self.settings = {"dims": (1,1,1), 
-                    "struct": {"type": "diamond", 
-                               "spp": ["Si","Si"] },
+        self.settings = {"dims": dim, 
+                    "struct": {"type": struct["type"], 
+                               "spp": struct["spp"] },
                     "colors": {"Si": "grey"},
                     "cutoff": 1 }
         
@@ -18,12 +17,6 @@ class Crystal:
                                 self.settings["struct"]["spp"])
         else:
             print("E: Structure not found")
-    
-        self.plot(show_ids=True, show_spheres = False)
-
-    
-    # Hver struktur faar en egen metode. Senere ma jeg
-    # forene dem i et felles rammeverk
     
 
     def _diamond(self, dims, species):
@@ -88,26 +81,18 @@ class Crystal:
         ax.set_zlabel('Z axis')
 
         plt.show()
-   
-    # perturb elements in the primitive cell
+
+
     def perturb(self, Id, shift):
         # Id is the position of nucleus in the list
-        pass
-
-
-    # output hamiltonian
-    def hamiltonian(self,wavenumber):
-        wavenumber = 0.0
-        # basis knowledge. Loop over basis elt. in 2D-loop
-        # get coords of each nucleus
-        # velg en r der vi kutter summen.
-        for elt1 in self.basis:
-            for elt2 in self.basis:
-                sum = 0.0
-                for G in self.nuclei:
-                    sum += 1
-        H = []
-        return np.array(H, dtype = np.complex128)
+        for sp in self.nuclei:
+            for ID in self.nuclei[sp]:
+                if ID == Id:
+                    x = self.nuclei[sp][ID]
+                    self.nuclei[sp][ID] = (
+                        x[0] + shift[0],
+                        x[1] + shift[1],
+                        x[2] + shift[2])
 
 
 if __name__ == "__main__":
