@@ -74,3 +74,29 @@ def DiamondCell(origin, start_Id, spp, end_plate):
 
         return coords, nuclei_added_to_cell
 
+def _diamond(self, dims, spp):
+    
+    # the method must contain empty dict and
+    # nx,ny,nz number of blocks and start_Id
+
+    sp1, sp2 = spp
+    nuclei = {}
+    nuclei[sp1] = {}
+    nuclei[sp2] = {}
+    nx,ny,nz = dims
+    start_Id = 0
+
+    for i in range( nx ):
+        for j in range( ny ):
+            for k in range( nz ):
+                # end_plate sees
+                end_plate =  np.argwhere(
+                    np.array([nx - i,ny - j,nz - k]) == 1 ).T[0]
+                origin = (i,j,k)
+                cell, added = Cell(origin, start_Id,
+                    species, end_plate)
+                start_Id += added
+                for sp in np.unique(np.array(
+                        self.settings["spp"])):
+                    nuclei[sp].update(cell[sp])
+    return nuclei
