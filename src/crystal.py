@@ -12,6 +12,9 @@ class Crystal:
         }
         self.nuclei = None
 
+    def __len__(self):
+        return sum([ 1  for sp in self.settings["spp"] \
+                    for coords in self.nuclei[sp] ])
 
     def from_struct(self, struct):
 
@@ -137,7 +140,7 @@ if __name__ == "__main__":
 
     
     lat = [c(1,0,0),c(0,1,0), c(0,0,1)]
-    atoms = {"Si": [c(0,0,0), 1/4*c(1,1,1), 
+    atoms = {"Si": [c(0., 0.,0.), 1/4*c(1,1,1), 
                     c(0,0.5,0.5), c(1/4,3/4,3/4), 
                     c(0.5,0,0.5), c(3/4,1/4,3/4), 
                     c(0.5,0.5,0), c(3/4,3/4,1/4)
