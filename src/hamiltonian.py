@@ -21,11 +21,15 @@ class Hamiltonian:
             for (R_j,f_j) in self.basis:
                 sum = 0.0
                 for G in self.crystal.neighbors(R_i):
-                    if np.linalg.norm(x-y) < r:
-                        sum += 1
+                    pass
         return np.array(H, dtype = np.complex128)
 
 
+""" 
+
+OVER HER MÅ JEG IMPLEMENTERE NERMESTE NABOAPPROKSIMASJON
+
+"""
 
 
 if __name__ == "__main__":
