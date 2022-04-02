@@ -3,6 +3,7 @@ class Slaterkoster:
     def __init__(self, basis, params):
         k = len(basis.functions)
         self.prime = {}
+        self.param = np.array(list(params.values))
         primes = self.prime_gen(k)
         # a map from single quantum numbers to primes
         for f_i,prime in zip(basis.functions, primes):
@@ -19,33 +20,37 @@ class Slaterkoster:
         for i, sing in enumerate( primes ) :
             self.map[sing] = i
 
-
-        # sets hardcoded self._param
-        from slaterkoster.param import Param
-
-        self._param = np.zeros((k,k))
-
-        self._param = Param.build(param)
-
         # sets hardcoded self._coef
         from slaterkoster.coef import Coef 
         self._coefs = Coef.build()
 
-        # 
-
-
-
-    # calculates
+    """# calculates
     def coef(self, d, qn1, qn2):
         dhat = d/len(d)
         l, m, n = dhat
         idx = self.map[self.prime[qn1]*self.prime[qn2]]
-        return self._coefs[ idx ](l,m,n)
+        return self._coefs[ idx ](l,m,n)"""
 
 
     # calculates
-    def param(self, qn1, qn2):
-        return self._params[ self.prim[qn1] , self.prim[qn2] ]
+    def coef(self, d, qn1, qn2):
+        length = length(d)
+        if length != 0 :
+            dhat = d/length
+            l, m, n = dhat
+            return self._coefs[ self.map_single[self.prime[qn1]], 
+                            self.map_single[self.prime[qn2]] ](l,m,n)
+        else:
+            if qn1 == "1s" and qn2 == "1s":
+                return c(1,0,0,0,0,0)
+            elif qn1[:2] == "2p" and qn2[:2] == "2p":
+                return c(0,1,0,0,0,0)
+            else:
+                raise( ValueError("Cannot return the correct coef") )
+
+    # calculates
+    #def param(self, qn1, qn2):
+    #    return self._params[ self.prim[qn1] , self.prim[qn2] ]
 
 
     @static

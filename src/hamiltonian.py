@@ -8,6 +8,8 @@ class Hamiltonian:
     # params : {  "ss-sigma": 1, "sp-sigma": 1,
     #            "pp-sigma": 1, "pp-pi": 1   }
 
+    
+
     def __init__(self, crystal, basis, params):
         self.crystal = crystal
         self.basis = basis
@@ -22,7 +24,8 @@ class Hamiltonian:
                 for G in self.crystal.neighbors(R_j):
                     s += exp(1j*G*k)*np.dot( 
                             self.sk.coef(G-R_i, f_i,f_j ),
-                            self.sk.param(f_i,f_j ) )
+                            self.sk.param #(f_i,f_j ) 
+                            )
 
         return np.array(H, dtype = np.complex128)
 
@@ -40,20 +43,10 @@ if __name__ == "__main__":
                 struct = {"type":"diamond", 
                           "spp": ["Si","Si"]})
 
-    basis = ["1s","2s","2px","2py","2pz"]
-    params = {  "ss-sigma": 1, "sp-sigma": 1,
-                "pp-sigma": 1, "pp-pi": 1   }
-
-    params = {  "1s1s-sig": 1, 
-         "1s2s-sig": 1, 
-         "1s1p-sig": 1, 
-         "1s1p-sig": 1, 
-         "1s1p-sig": 1, 
-         "1s1s-sig": 1, 
-         "1s1s-sig": 1, 
-         "1s1s-sig": 1, 
-         "1s1s-sig": 1, 
-       }
+    basis = ["1s","2px","2py","2pz"]
+    params = {  "Es": 0, "Ep": 4.39, 
+                "ss-sigma": -2.08, "sp-sigma": -2.12,
+                "pp-sigma": -2.32, "pp-pi": -0.52 }
 
 
     H1 = Hamiltonian(crl1, basis, params)
