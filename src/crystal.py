@@ -59,6 +59,20 @@ class Crystal:
         return self
 
 
+    def neighbors(self, coord):
+        Id = self.coord2id(coord)
+        
+
+    def coord2id(self, coords, eps = 1e-6):
+        ids = []
+        for sp in self.settings["spp"]:
+            for Id, coordp in self.nuclei[sp].items():
+                for wanted_coord in coords:
+                    if np.linalg.norm(wanted_coord - coordp) < eps:
+                        return ids.append(Id)
+        return ids
+
+
     def transform(self, A):
         _coord = {}
         for sp in self.settings["spp"]:
@@ -113,7 +127,7 @@ class Crystal:
 
 if __name__ == "__main__":
 
-    from numpy import pi,cos,sin
+    from numpy import pi, cos, sin
 
     crl1 = Crystal(dims = (1,1,1)).from_struct(
                     {"type": "diamond", "spp": ["Si","Si"]})
