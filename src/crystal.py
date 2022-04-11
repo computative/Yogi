@@ -16,7 +16,7 @@ class Crystal:
         return sum([ 1  for sp in self.settings["spp"] \
                     for coords in self.nuclei[sp] ])
 
-    def from_struct(self, struct):
+    def from_struct(self, struct, **kwargs):
 
         self.settings["spp"] = \
                     list(np.unique(np.array(struct["spp"])))
@@ -29,7 +29,7 @@ class Crystal:
             from struc.diamond import Diamond
 
             self.nuclei = Diamond(self.settings["dims"], 
-                                struct["spp"])
+                                struct["spp"], **kwargs)
         else:
             print("E: Structure not found")
         return self
@@ -59,19 +59,13 @@ class Crystal:
         return self
 
 
-    def neighbors(self, coord):
-        Id = self.coord2id(coord)
-        
-
-    def coord2id(self, coords, eps = 1e-6):
-        ids = []
+    def neighbors(self, origin, r):
+        coords = []
         for sp in self.settings["spp"]:
             for Id, coordp in self.nuclei[sp].items():
-                for wanted_coord in coords:
-                    if np.linalg.norm(wanted_coord - coordp) < eps:
-                        return ids.append(Id)
-        return ids
-
+                if np.linalg.norm(origin - coordp) < r:
+                    coords.append(coordp)
+        return coords
 
     def transform(self, A):
         _coord = {}
@@ -130,7 +124,7 @@ if __name__ == "__main__":
     from numpy import pi, cos, sin
 
     crl1 = Crystal(dims = (1,1,1)).from_struct(
-                    {"type": "diamond", "spp": ["Si","Si"]})
+                    {"type": "diamond", "spp": ["Si","Si"]}, noendplate=True)
 
  
     # rotation about z axis angle pi/4.
@@ -147,13 +141,13 @@ if __name__ == "__main__":
 
     # transform
 
-    crl1.transform(A)
+    #crl1.transform(A)
     
     crl1.plot()
 
 
     
-    lat = [c(1,0,0),c(0,1,0), c(0,0,1)]
+    """lat = [c(1,0,0),c(0,1,0), c(0,0,1)]
     atoms = {"Si": [c(0., 0.,0.), 1/4*c(1,1,1), 
                     c(0,0.5,0.5), c(1/4,3/4,3/4), 
                     c(0.5,0,0.5), c(3/4,1/4,3/4), 
@@ -162,5 +156,5 @@ if __name__ == "__main__":
     crl2 = Crystal(dims = (2,1,1)).from_coords(
                     {"lattice": lat, "atoms": atoms})
 
-    crl2.plot()
+    crl2.plot()"""
     

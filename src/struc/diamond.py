@@ -77,7 +77,7 @@ def Cell(origin, start_Id, spp, end_plate):
 
         return coords, nuclei_added_to_cell
 
-def Diamond(dims, spp):
+def Diamond(dims, spp, **kwargs):
     
     # the method must contain empty dict and
     # nx,ny,nz number of blocks and start_Id
@@ -93,8 +93,12 @@ def Diamond(dims, spp):
         for j in range( ny ):
             for k in range( nz ):
                 # end_plate sees
-                end_plate =  np.argwhere(
-                    c(nx - i,ny - j,nz - k) == 1 ).T[0]
+                if "kwargs" in locals() and "noendplate" in kwargs and kwargs["noendplate"]:
+                    end_plate =  np.argwhere(
+                        c(nx - i,ny - j,nz - k) == -1 ).T[0]
+                else:
+                    end_plate =  np.argwhere(
+                        c(nx - i,ny - j,nz - k) == 1 ).T[0]
                 origin = c(i,j,k)
                 cell, added = Cell(origin, start_Id,
                     spp, end_plate)
