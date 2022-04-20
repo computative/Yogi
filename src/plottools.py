@@ -20,7 +20,7 @@ class PlotTools:
 
     @staticmethod
     def kpath(a,b,_n):
-        r = (b-a)/np.linalg.norm(b-a)
+        r = (b-a)#/np.linalg.norm(b-a)
         path = []
         for x in np.linspace(0, 1, int(_n)):
             path.append(a + x*r)

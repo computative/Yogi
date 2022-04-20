@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
     from numpy import pi, cos, sin
 
-    crl1 = Crystal(dims = (1,1,1)).from_struct(
+    crl1 = Crystal(dims = (1,4,3)).from_struct(
                     {"type": "diamond", "spp": ["Si","Si"]}, noendplate=True)
 
  
@@ -146,15 +146,4 @@ if __name__ == "__main__":
     crl1.plot()
 
 
-    
-    """lat = [c(1,0,0),c(0,1,0), c(0,0,1)]
-    atoms = {"Si": [c(0., 0.,0.), 1/4*c(1,1,1), 
-                    c(0,0.5,0.5), c(1/4,3/4,3/4), 
-                    c(0.5,0,0.5), c(3/4,1/4,3/4), 
-                    c(0.5,0.5,0), c(3/4,3/4,1/4)
-    ]}
-    crl2 = Crystal(dims = (2,1,1)).from_coords(
-                    {"lattice": lat, "atoms": atoms})
-
-    crl2.plot()"""
     
