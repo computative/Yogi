@@ -1,4 +1,5 @@
 import numpy as np
+from vector import c
 
 class PlotTools:
 
@@ -39,4 +40,13 @@ class PlotTools:
             k.extend( PlotTools.kpath(a, b, _n)[:-2] )
         return np.array(k)
 
-    
+    @staticmethod
+    def fcc_sympts(a):
+        return {
+            "Gamma": c(0,0,0), 
+            "X": c(0, 2*np.pi/a,0) ,
+            "L": c(np.pi/a,np.pi/a,np.pi/a),
+            "W": c(np.pi/a,2*np.pi/a,0),
+            "U": c(np.pi/(2*a),2*np.pi/a,np.pi/(2*a)),
+            "K": c(3*np.pi/(2*a),3*np.pi/(2*a),0)
+            }

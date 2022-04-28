@@ -7,10 +7,11 @@ class Crystal:
     def __init__(self, dims):
         self.settings = {
             "spp" : [],
-            "colors": {"Si": "grey"},
+            "colors": {"Si": "grey", "Ge": "#668f8f"},
             "dims": dims
         }
         self.nuclei = None
+        self.lattice = []
 
     def __len__(self):
         return sum([ 1  for sp in self.settings["spp"] \
@@ -41,6 +42,7 @@ class Crystal:
         self.coords = coords
         lat, atoms = coords.values()
         self.nuclei = {}
+        self.lattice.extend(lat)
         for sp in coords["atoms"].keys():
             self.nuclei[sp] = {}
             self.settings["spp"].append(sp)

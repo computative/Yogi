@@ -1,4 +1,5 @@
 import numpy as np
+from vector import c
 
 class Slaterkoster:
 
@@ -31,12 +32,18 @@ class Slaterkoster:
     # calculates
     def coef(self, d, qn1, qn2):
         length = np.linalg.norm(d)
-        dhat = d/length
+        if length == 0:
+            if qn1 == "1s":
+                return c(1,0,0,0,0,0)
+            elif qn1[:2] == "2p":
+                return c(0,1,0,0,0,0)
+        else:
+            dhat = d/length
         l, m, n = dhat
-        #
-        return  ( 2.447/length )**2.353*self._coefs[ 
+        p = ( 2.447/length )**2.353
+        return  self._coefs[ 
             self.map_single[self.prime[qn1]], 
-            self.map_single[self.prime[qn2]] ](l,m,n)
+            self.map_single[self.prime[qn2]] ](l,m,n,p)
 
 
     @staticmethod
