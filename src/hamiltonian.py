@@ -8,10 +8,12 @@ np.set_printoptions(threshold=sys.maxsize)
 class Hamiltonian:
 
     def __init__(self, basis, params, eps = 1e-14):
+        # init
         self.basis = basis
         self.crystal = self.basis.crystal
         self.sk = sk(basis, params)
         self.eps = eps
+        # find W by transforming cubic coords
         a1,a2,a3 = self.crystal.lattice
         A = np.array([a1,a2,a3]).T
         
@@ -36,12 +38,13 @@ class Hamiltonian:
             for j,(R_j,f_j) in enumerate(self.basis):
 
                 if np.linalg.norm(R_i - R_j) < self.eps:
-                    if f_i != f_j: # set zero if excitations distinct
+                    if f_i != f_j:
                         continue
                 
                 s = 0 + 1j*0
 
                 for G in self.neighbors:
+                    
                     e = np.exp(1j*np.dot( G, k ))
                     
                     d = np.dot( 
@@ -67,25 +70,30 @@ class Hamiltonian:
 
 
 
-
-"""
-
-OVER HER MÅ JEG IMPLEMENTERE NERMESTE NABOAPPROKSIMASJON
-
-"""
-
-
 if __name__ == "__main__":
     from crystal import Crystal
     
     a = 5.431
-    lat = [a*c(0,0.5,0.5), a*c(0.5,0,0.5), a*c(0.5,0.5,0)]
-    atoms = {"Ge": [a*c(0,0,0),a*c(0.25,0.25,0.25)]}
+    lat_dimer = [a*c(0,0.5,0.5), a*c(0.5,0,0.5), a*c(0.5,0.5,0)]
+    atoms_dimer = {"Ge": [a*c(0,0,0),a*c(0.25,0.25,0.25)]}
+
+
+    lat = [a*c(1,0,0), a*c(0,1,0), a*c(0,0,1)]
+    atoms = {"Si": [a*c(0,0,0),a*c(0.25,0.25,0.25)]}
+
+    print(lat)
+    print(atoms)
+
+
     crl2 = Crystal(dims = (1,1,1))
     coords = {"lat" : lat, "atoms" : atoms}
     crl2.from_coords(coords)
-    
-    # bowler Ge
+
+
+    bowler_thesis = {   "Es": -12.2, "Ep": -5.75, 
+                        "ss-sigma": -1.938, "sp-sigma": 1.745,
+                        "pp-sigma": 3.050, "pp-pi": -1.075 }
+
     bowler = {  "Es": -13.88, "Ep": -6.39, 
                 "ss-sigma": -1.695, "sp-sigma": 2.366,
                 "pp-sigma": 2.853, "pp-pi": -0.823 }
@@ -95,14 +103,14 @@ if __name__ == "__main__":
                 "pp-sigma": 4.2541, "pp-pi": -1.6510 }
 
     basis = Basis(crl2, ["1s","2px","2py","2pz"])
-    hamiltonian = Hamiltonian(basis, bowler)
+    hamiltonian = Hamiltonian(basis, bowler_thesis)
+
+
+
+
 
     from plottools import PlotTools
 
-
-    # conventional unit cell induces a cubic lattice
-
-    #    X     Gamma     K       L       U        X
     sympts = PlotTools.fcc_sympts(a)
     kpath = [ sympts["K"], sympts["Gamma"], sympts["L"], sympts["K"] ]
     n = [35, 35, 35]
@@ -117,7 +125,7 @@ if __name__ == "__main__":
 
         if np.linalg.norm(k) == 0:
             np.set_printoptions(suppress=True)
-            print( np.round( HMatrix,1 ).real) 
+            print( np.round( HMatrix,3 ).real) 
             #exit()
 
         if not Hamiltonian.isHermitian(HMatrix):

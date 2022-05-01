@@ -11,7 +11,7 @@ class Coef:
                 return -f(l,m,n,p)
             return minus
 
-        #                        Es Ep ss-sig sp-sig  pp-sig  pp-pi      
+        #                         Es Ep ss-sig sp-sig  pp-sig  pp-pi      
         ss = lambda l,m,n,p : p*c(0, 0 ,  1  ,   0   ,   0   ,  0   )
         sx = lambda l,m,n,p : p*c(0, 0 ,  0  ,   l   ,   0   ,  0   )
         sy = lambda l,m,n,p : p*c(0, 0 ,  0  ,   m   ,   0   ,  0   )

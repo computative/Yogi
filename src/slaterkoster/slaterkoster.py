@@ -40,7 +40,8 @@ class Slaterkoster:
         else:
             dhat = d/length
         l, m, n = dhat
-        p = ( 2.447/length )**2.353
+
+        p = ( 2.35/length )**1.9771
         return  self._coefs[ 
             self.map_single[self.prime[qn1]], 
             self.map_single[self.prime[qn2]] ](l,m,n,p)
