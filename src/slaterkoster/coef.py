@@ -23,8 +23,11 @@ class Coef:
         zx = lambda l,m,n,p : p*c(0, 0 ,  0  ,   0   , l*n   , -l*n )
         zy = lambda l,m,n,p : p*c(0, 0 ,  0  ,   0   , m*n   , -m*n )
         #                  s      x   y   z
-        return np.array([   
-                        [  ss   , sx, sy, sz],      # s
+        map = np.array([[  ss   , sx, sy, sz],      # s
                         [sgn(sx), xx, yx, zx],      # x
                         [sgn(sy), yx, yy, zy],      # y
                         [sgn(sz), zx, zy, zz]]  )   # z
+
+        map[[1,2,3],:] = map[[2,3,1],:]
+        map[:,[1,2,3]] = map[:,[2,3,1]]
+        return map

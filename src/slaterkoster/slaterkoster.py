@@ -27,8 +27,6 @@ class Slaterkoster:
         from slaterkoster.coef import Coef 
         self._coefs = Coef.build()
 
-
-
     # calculates
     def coef(self, d, qn1, qn2):
         length = np.linalg.norm(d)
@@ -40,11 +38,14 @@ class Slaterkoster:
         else:
             dhat = d/length
         l, m, n = dhat
-
-        p = ( 2.35/length )**1.9771
+        
+        #p1 = ( 2.35/length )**1.9771
+        p2 = (2.35/length)**1.9771 * np.exp(1.9771* ((2.35/3.8661)**6.8702 - (length/3.8661)**6.8702))
+        #print (p1, p2)
         return  self._coefs[ 
-            self.map_single[self.prime[qn1]], 
-            self.map_single[self.prime[qn2]] ](l,m,n,p)
+                    self.map_single[self.prime[qn1]], 
+                    self.map_single[self.prime[qn2]] 
+                ](l,m,n,p2)
 
 
     @staticmethod
