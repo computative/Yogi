@@ -1,10 +1,11 @@
 import numpy as np
-from vector import c
+from numpy import array as ar
+
 
 
 class Crystal:
 
-    def __init__(self, dims):
+    def __init__(self, dims = (1,1,1)):
         self.settings = {
             "spp" : [],
             "colors": {"Si": "grey", "Ge": "#668f8f"},
@@ -17,42 +18,30 @@ class Crystal:
         return sum([ 1  for sp in self.settings["spp"] \
                     for coords in self.nuclei[sp] ])
 
-    def from_struct(self, struct, **kwargs):
-
-        self.settings["spp"] = \
-                    list(np.unique(np.array(struct["spp"])))
-        
-        # setting flag that crystal was constructed from struct
-        self.struct = struct
-
-        if struct["type"] == "diamond":
-
-            from struc.diamond import Diamond
-
-            self.nuclei = Diamond(self.settings["dims"], 
-                                struct["spp"], **kwargs)
-        else:
-            print("E: Structure not found")
-        return self
-
 
     def from_coords(self, coords):
-        # setting flag that crystal was constructed from struct
 
         self.coords = coords
-        lat, atoms = coords.values()
+        rep, atoms = coords.values()
+        rep = ar(rep)
         self.nuclei = {}
-        self.lattice.extend(lat)
+        self.lattice.extend( 
+            rep* \
+            np.reshape( np.repeat(np.array( 
+                  self.settings["dims"] ),3) , (3,3) 
+            )
+        )
         for sp in coords["atoms"].keys():
             self.nuclei[sp] = {}
             self.settings["spp"].append(sp)
+            atoms[sp] = ar(atoms[sp])
         nx,ny,nz = self.settings["dims"]
 
         start_Id = 0
         for i in range( nx ):
             for j in range( ny ):
                 for k in range( nz ):
-                    origin = i*lat[0]+j*lat[1]+k*lat[2]
+                    origin = i*rep[0]+j*rep[1]+k*rep[2]
                     for sp in self.settings["spp"]:
                         for coord in atoms[sp]:
                             _dict = {start_Id:coord+origin}
@@ -61,14 +50,22 @@ class Crystal:
         return self
 
 
-    def neighbors(self, origin, r):
-        coords = []
-        for sp in self.settings["spp"]:
-            for Id, coordp in self.nuclei[sp].items():
-                if np.linalg.norm(origin - coordp) < r:
-                    coords.append(coordp)
-        return coords
+    def from_struct(self, struct, **kwargs):
 
+        # setting flag that crystal was constructed from struct
+        self.struct = struct
+        
+        exec("from struc.{} import {} as StrucType".format(
+            struct["type"].lower(), struct["type"].capitalize()
+        ), globals())
+
+        struc_type = StrucType(struct["spp"])
+        self.from_coords({
+            "rep" : struc_type.rep, 
+            "atoms" : struc_type.atoms
+        })
+        return self
+    
     def transform(self, A):
         _coord = {}
         for sp in self.settings["spp"]:
@@ -110,7 +107,7 @@ class Crystal:
 
         plt.show()
 
-
+    
     def perturb(self, Id, shift):
         # Id is the position of nucleus in the list
         for sp in self.nuclei:
@@ -119,21 +116,24 @@ class Crystal:
                     self.nuclei[sp][ID] = \
                         self.nuclei[sp][ID] + shift
 
+    
+    def lat_const(self, axis):
+        return np.linalg.norm(self.lattice[axis])
+
 
 
 if __name__ == "__main__":
 
-    from numpy import pi, cos, sin
 
-    crl1 = Crystal(dims = (1,4,3)).from_struct(
-                    {"type": "diamond", "spp": ["Si","Si"]}, noendplate=True)
+    crl1 = Crystal(dims = (1,1,1)).from_struct(
+                    {"type": "diamond", "spp": ["Si","Si"]})
 
  
     # rotation about z axis angle pi/4.
-
-    t = pi/4
+    from numpy import pi, cos, sin
 
     # A in SO(3)
+    t = pi/4
 
     A = np.array([
         [cos(t),-sin(t),0],
@@ -143,9 +143,28 @@ if __name__ == "__main__":
 
     # transform
 
-    #crl1.transform(A)
+    crl1.transform(A)
     
     crl1.plot()
 
+    a = 5.431
+    rep = [[a,0,0], [0,a,0], [0,0,a]]
+    atoms = {"Si": [ 
+        [0,0,0],
+        [a/4,a/4,a/4],
+        [0,a/2,a/2],
+        [a/4,3*a/4,3*a/4],
+        [a/2,0,a/2],
+        [3*a/4,a/4,3*a/4],
+        [a/2,a/2,0],
+        [3*a/4,3*a/4,a/4]
+    ]}
 
-    
+    crl2 = Crystal(dims = (2,2,2))
+    coords = {"rep" : rep, "atoms" : atoms}
+    crl2.from_coords(coords)
+
+    crl2.plot()
+
+    print(crl1.nuclei)
+

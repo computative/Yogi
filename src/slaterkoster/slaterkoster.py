@@ -1,5 +1,5 @@
 import numpy as np
-from vector import c
+from numpy import array as ar
 
 class Slaterkoster:
 
@@ -32,20 +32,22 @@ class Slaterkoster:
         length = np.linalg.norm(d)
         if length == 0:
             if qn1 == "1s":
-                return c(1,0,0,0,0,0)
+                return ar([1,0,0,0,0,0])
             elif qn1[:2] == "2p":
-                return c(0,1,0,0,0,0)
-        else:
-            dhat = d/length
+                return ar([0,1,0,0,0,0])
+        elif length > 3.2:
+            return ar([0,0,0,0,0,0])
+        
+        dhat = d/length
         l, m, n = dhat
         
-        #p1 = ( 2.35/length )**1.9771
-        p2 = (2.35/length)**1.9771 * np.exp(1.9771* ((2.35/3.8661)**6.8702 - (length/3.8661)**6.8702))
+        p1 = ( 2.35/length )**1.9771
+        #p2 = (2.35/length)**1.9771 * np.exp(1.9771* ((2.35/3.8661)**6.8702 - (length/3.8661)**6.8702))
         #print (p1, p2)
         return  self._coefs[ 
                     self.map_single[self.prime[qn1]], 
                     self.map_single[self.prime[qn2]] 
-                ](l,m,n,p2)
+                ](l,m,n,p1)
 
 
     @staticmethod

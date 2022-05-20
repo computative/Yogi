@@ -1,10 +1,10 @@
 import numpy as np
 from vector import c
 
-class PlotTools:
+class VisualTools:
 
     def line(self, idx):
-            plt.plot([idx,idx],[-13.5,12.15], "k",linewidth=0.6)
+        plt.plot([idx,idx],[-13.5,12.15], "k",linewidth=0.6)
 
 
     @staticmethod
@@ -37,7 +37,7 @@ class PlotTools:
             a = np.array(path[i])
             b = np.array(path[i+1])
             _n = n[i]
-            k.extend( PlotTools.kpath(a, b, _n)[:-2] )
+            k.extend( VisualTools.kpath(a, b, _n)[:-2] )
         return np.array(k)
 
     @staticmethod
@@ -50,3 +50,9 @@ class PlotTools:
             "U": c(np.pi/(2*a),2*np.pi/a,np.pi/(2*a)),
             "K": c(3*np.pi/(2*a),3*np.pi/(2*a),0)
             }
+
+    @staticmethod
+    def matrix_formatting():
+        np.set_printoptions(threshold=np.inf)
+        np.set_printoptions(linewidth=np.inf)
+        np.set_printoptions(suppress=True)
