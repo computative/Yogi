@@ -3,15 +3,15 @@ import numpy as np
 from basisIter import Basis
 from numpy import array as ar
 import sys
+import utils
 
 class Hamiltonian:
 
-    def __init__(self, crystal, functions, params, eps = 1e-14):
+    def __init__(self, crystal, functions, params):
         # init
-        self.basis = Basis(crystal, functions)
+
         self.crystal = crystal
-        self.sk = sk(self.basis, params)
-        self.eps = eps
+
         # find W by transforming cubic coords
         a1,a2,a3 = self.crystal.lattice
         A = np.array([a1,a2,a3]).T
@@ -24,32 +24,20 @@ class Hamiltonian:
                 for k in range(-neighbors, neighbors+1):
                     self.neighbors.append(  np.dot(A, ar([ i, j, k]) ) )
 
-        self.HGamma = self._HGamma()
+        basis = Basis(crystal, functions)
+        self.sk = sk(basis, params, self.neighbors)
+
+        self.N = len(basis)
+
+        self.HGamma = self.sk.HGamma()
 
 
-    def _HGamma(self):
-        N = len(self.basis); K = len(self.neighbors)
-        self.HGamma = np.zeros( (K,N,N) , dtype=complex )
-        for i,(R_i,f_i) in enumerate(self.basis):
-            for j,(R_j,f_j) in enumerate(self.basis):
-                for k, G in enumerate(self.neighbors):
-                    if (np.linalg.norm( R_j-R_i) + np.linalg.norm(G)  < self.eps) \
-                                        and f_i != f_j:
-                        continue
-                    
-                    self.HGamma[k,i,j] = np.dot(
-                        self.sk.coef(((R_j + G)-R_i), f_i,f_j ),
-                        self.sk.param
-                    )
-                    
-        return self.HGamma
 
     def __call__(self, k):
-        N = len(self.basis)
+        N = self.N
         H = np.zeros( (N,N) , dtype=complex )
         for i, G in enumerate(self.neighbors):          
             H += np.exp(1j*np.dot( G, k ))*self.HGamma[i]
-
         return H
 
     @staticmethod

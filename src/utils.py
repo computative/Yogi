@@ -11,3 +11,5 @@ def prime_gen(n):
             primes.append(p)
         p += 1
     return primes
+
+eps = 1e-14
