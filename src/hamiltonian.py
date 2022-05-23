@@ -15,9 +15,6 @@ class Hamiltonian:
         # find W by transforming cubic coords
         a1,a2,a3 = self.crystal.lattice
         A = np.array([a1,a2,a3]).T
-        
-        def T(x):
-            return np.dot(A,x)
 
         neighbors = 1
         self.neighbors=[]
@@ -25,26 +22,33 @@ class Hamiltonian:
         for i in range(-neighbors, neighbors+1):
             for j in range(-neighbors, neighbors+1):
                 for k in range(-neighbors, neighbors+1):
-                    self.neighbors.append( T( ar([ i, j, k]) ) )
+                    self.neighbors.append(  np.dot(A, ar([ i, j, k]) ) )
+
+        self.HGamma = self._HGamma()
 
 
-    def __call__(self, k=0):
-        n = len(self.basis)
-        H = np.zeros( (n,n) , dtype=complex )
+    def _HGamma(self):
+        N = len(self.basis); K = len(self.neighbors)
+        self.HGamma = np.zeros( (K,N,N) , dtype=complex )
         for i,(R_i,f_i) in enumerate(self.basis):
             for j,(R_j,f_j) in enumerate(self.basis):
-                s = 0 + 1j*0
-                for G in self.neighbors:
+                for k, G in enumerate(self.neighbors):
                     if (np.linalg.norm( R_j-R_i) + np.linalg.norm(G)  < self.eps) \
                                         and f_i != f_j:
                         continue
                     
-                    s+= np.exp(1j*np.dot( G, k ))*np.dot( 
+                    self.HGamma[k,i,j] = np.dot(
                         self.sk.coef(((R_j + G)-R_i), f_i,f_j ),
                         self.sk.param
                     )
                     
-                H[i,j] = s
+        return self.HGamma
+
+    def __call__(self, k):
+        N = len(self.basis)
+        H = np.zeros( (N,N) , dtype=complex )
+        for i, G in enumerate(self.neighbors):          
+            H += np.exp(1j*np.dot( G, k ))*self.HGamma[i]
 
         return H
 
@@ -72,19 +76,21 @@ if __name__ == "__main__":
                 "ss-sigma": -1.938, "sp-sigma": 1.745,
                 "pp-sigma": 3.050, "pp-pi": -1.075 }
 
+
+
     hamiltonian = Hamiltonian(crl, ["1s","2px","2py","2pz"], bowler)
+
+    eigs = []
+
 
 
     from visualtools import VisualTools
-
     sympts = VisualTools.fcc_sympts(crl.lat_const(1))
-
     kpath = {
-        "waypts": [ sympts["K"], sympts["Gamma"], sympts["L"], sympts["K"] ],
-        "n" : [35, 35, 35]
+        "waypts": [ sympts["K"], sympts["Gamma"],sympts["L"], sympts["K"]  ],
+        "n" : [35,35,35]
     }
 
-    eigs = []
 
     for i, k in enumerate(VisualTools.kpts(kpath["waypts"], kpath["n"])):
         print( "Iteration", i )
