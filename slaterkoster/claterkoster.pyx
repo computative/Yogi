@@ -2,6 +2,10 @@ import numpy as np
 from numpy import array as ar
 import utils
 
+cimport numpy as np
+
+np.import_array()
+
 class Slaterkoster:
 
     def __init__(self, basis, params, neighbors):
@@ -32,7 +36,6 @@ class Slaterkoster:
         
         bowler = ( 2.35/length )**1.9771
         return bowler*self.F[ self.map[qn1]][self.map[qn2] ](l,m,n)
-
 
 
     def HGamma(self):
@@ -99,4 +102,38 @@ class Slaterkoster:
 
 
 
+class BasisIterator:
+    def __init__(self, R, functions):
+        cdef int n = len(R)*len(functions)
+        cdef np.ndarray self.R = np.zeros( (n*n,3), dtype=np.double )
+        cdef np.ndarray self.f = np.zeros( n*n, dtype=np.double )
+        for i, r in enumerate(R):
+            for j, f in enumerate(functions):
+                self.R[i] = r 
+                self.f[i] = f
+        self.contents = [ (R,f)  for R in R  for f in functions ]
+        cdef int self.pos = 0
+        cdef int self.len = len(self.contents)
 
+    cdef __next__(self):
+        if self.pos >= self.len :
+            raise StopIteration
+        self.pos += 1
+        return (self.R[pos], self.f[pos])
+
+
+class Basis:
+
+    def __init__(self, crystal, functions ):
+        self.crystal = crystal
+        self.functions = functions
+        self.R = []
+        for elts in crystal.nuclei.values():
+            for R in elts.values():
+                self.R.append(R)
+
+    def __iter__(self):
+        return BasisIterator(self.R, self.functions)
+
+    def __len__(self):
+        return len(self.crystal)*len(self.functions)

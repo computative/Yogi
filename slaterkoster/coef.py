@@ -3,7 +3,6 @@ from vector import c
 
 class Coef:
 
-    @staticmethod
     def build(map):
 
         n = len(map)

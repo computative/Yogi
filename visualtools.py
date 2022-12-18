@@ -37,8 +37,17 @@ class VisualTools:
             a = np.array(path[i])
             b = np.array(path[i+1])
             _n = n[i]
-            k.extend( VisualTools.kpath(a, b, _n)[:-2] )
-        return np.array(k)
+            k.extend( VisualTools.kpath(a, b, _n) )
+
+        past = k[0]
+        k_norepeated = [k[0]]
+        for item in k[1:]:
+            if (item != past).any():
+                k_norepeated.append(item)
+            past = item
+        return k_norepeated
+
+
 
     @staticmethod
     def fcc_sympts(a):
@@ -51,6 +60,16 @@ class VisualTools:
             "K": c(3*np.pi/(2*a),3*np.pi/(2*a),0)
             }
 
+    @staticmethod
+    def diamond_sympts(a):
+        return {
+            "Gamma": c(0,0,0), 
+            "X": c(2*np.pi/a, 0,0) ,
+            "L": c(np.pi/a,np.pi/a,np.pi/a),
+            "W": c(2*np.pi/a,np.pi/a,0),
+            "U": c(2*np.pi/a,np.pi/(2*a),np.pi/(2*a)),
+            "K": c(3*np.pi/(2*a),3*np.pi/(2*a),0)
+            }
     @staticmethod
     def matrix_formatting():
         np.set_printoptions(threshold=np.inf)

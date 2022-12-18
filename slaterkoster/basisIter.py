@@ -2,7 +2,7 @@ import numpy as np
 
 class BasisIterator:
     def __init__(self, R, functions):
-        self.contents = [(R,f)  for R in R  for f in functions ]
+        self.contents = [ (R,f)  for R in R  for f in functions ]
         self.pos = 0
         self.len = len(self.contents)
 

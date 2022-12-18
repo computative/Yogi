@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import array as ar
+import numpy.random as Rand
 
 
 
@@ -31,6 +32,7 @@ class Crystal:
                   self.settings["dims"] ),3) , (3,3) 
             )
         )
+
         for sp in coords["atoms"].keys():
             self.nuclei[sp] = {}
             self.settings["spp"].append(sp)
@@ -107,15 +109,25 @@ class Crystal:
 
         plt.show()
 
-    
+
+    # shift the elements but be sure they stay inside the bounding box
+
+    def shift(self, std_dev):
+        random = Rand.normal( 0, std_dev, size = (len(self),3) )
+        for id, eps in enumerate(random):
+            self.perturb(id, eps)
+
+
     def perturb(self, Id, shift):
         # Id is the position of nucleus in the list
+        # m is some number that you add on to ensure that coord ends up positive
+        m = 10
         for sp in self.nuclei:
             for ID in self.nuclei[sp]:
                 if ID == Id:
-                    self.nuclei[sp][ID] = \
-                        self.nuclei[sp][ID] + shift
-
+                    coord = self.nuclei[sp][ID] + shift \
+                        + m*self.lattice[0] + m*self.lattice[1] + m*self.lattice[2]
+                    self.nuclei[sp][ID] = np.mod(coord,np.diag(self.lattice))
     
     def lat_const(self, axis):
         return np.linalg.norm(self.lattice[axis])

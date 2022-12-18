@@ -1,15 +1,12 @@
 from slaterkoster.slaterkoster import Slaterkoster as sk
 import numpy as np
-from basisIter import Basis
+from slaterkoster.basisIter import Basis
 from numpy import array as ar
-import sys
-import utils
 
 class Hamiltonian:
 
     def __init__(self, crystal, functions, params):
         # init
-
         self.crystal = crystal
 
         # find W by transforming cubic coords
@@ -17,6 +14,7 @@ class Hamiltonian:
         A = np.array([a1,a2,a3]).T
 
         neighbors = 1
+        
         self.neighbors=[]
 
         for i in range(-neighbors, neighbors+1):
@@ -24,11 +22,9 @@ class Hamiltonian:
                 for k in range(-neighbors, neighbors+1):
                     self.neighbors.append(  np.dot(A, ar([ i, j, k]) ) )
 
-        basis = Basis(crystal, functions)
-        self.sk = sk(basis, params, self.neighbors)
-
-        self.N = len(basis)
-
+        self.basis = Basis(crystal, functions)
+        self.sk = sk(self.basis, params, self.neighbors)
+        self.N = len(self.basis)
         self.HGamma = self.sk.HGamma()
 
 
@@ -36,8 +32,14 @@ class Hamiltonian:
     def __call__(self, k):
         N = self.N
         H = np.zeros( (N,N) , dtype=complex )
-        for i, G in enumerate(self.neighbors):          
+        for i, G in enumerate(self.neighbors):
             H += np.exp(1j*np.dot( G, k ))*self.HGamma[i]
+        
+        for i, (Ri,_) in enumerate(self.basis):
+            for j, (Rj,__) in enumerate(self.basis):
+                if np.abs(H[i,j]) > 4/16 and np.linalg.norm(Ri-Rj) > 15:
+                    print("boom", H[i,j] )
+            
         return H
 
     @staticmethod
@@ -57,12 +59,27 @@ class Hamiltonian:
 if __name__ == "__main__":
     from crystal import Crystal
 
-    crl = Crystal(dims=(1,1,1)).from_struct(
-        {"type": "diamond", "spp": ["Si","Si"]}
-    )
+
+    a = 5.431
+    rep = [[a,0,0], [0,a,0], [0,0,a]]
+    atoms = {"Si": [ 
+        [0,0,0],
+        [a/4,a/4,a/4],
+        [0,a/2,a/2],
+        [a/4,3*a/4,3*a/4],
+        [a/2,0,a/2],
+        [3*a/4,a/4,3*a/4],
+        [a/2,a/2,0],
+        [3*a/4,3*a/4,a/4]
+    ]}
+    coords = {"rep" : rep, "atoms" : atoms}
+
+    crl = Crystal(dims = (1,1,1)).from_coords(coords)
+
     bowler = {  "Es": -12.2, "Ep": -5.75, 
                 "ss-sigma": -1.938, "sp-sigma": 1.745,
                 "pp-sigma": 3.050, "pp-pi": -1.075 }
+
 
 
 
@@ -73,7 +90,7 @@ if __name__ == "__main__":
 
 
     from visualtools import VisualTools
-    sympts = VisualTools.fcc_sympts(crl.lat_const(1))
+    sympts = VisualTools.fcc_sympts(a)
     kpath = {
         "waypts": [ sympts["K"], sympts["Gamma"],sympts["L"], sympts["K"]  ],
         "n" : [35,35,35]
