@@ -2,6 +2,10 @@ from slaterkoster.slaterkoster import Slaterkoster as sk
 import numpy as np
 from slaterkoster.basisIter import Basis
 from numpy import array as ar
+from multiprocessing import Pool
+import utils
+
+
 
 class Hamiltonian:
 
@@ -25,8 +29,8 @@ class Hamiltonian:
         self.basis = Basis(crystal, functions)
         self.sk = sk(self.basis, params, self.neighbors)
         self.N = len(self.basis)
-        self.HGamma = self.sk.HGamma()
-
+        with Pool() as pool:
+            self.HGamma = ar( pool.map( self.sk.HGamma_m, [ (  k, G,self.N, self.sk)  for k, G in enumerate(self.sk.neighbors)] ) )
 
 
     def __call__(self, k):
@@ -34,12 +38,6 @@ class Hamiltonian:
         H = np.zeros( (N,N) , dtype=complex )
         for i, G in enumerate(self.neighbors):
             H += np.exp(1j*np.dot( G, k ))*self.HGamma[i]
-        
-        for i, (Ri,_) in enumerate(self.basis):
-            for j, (Rj,__) in enumerate(self.basis):
-                if np.abs(H[i,j]) > 4/16 and np.linalg.norm(Ri-Rj) > 15:
-                    print("boom", H[i,j] )
-            
         return H
 
     @staticmethod
@@ -79,8 +77,6 @@ if __name__ == "__main__":
     bowler = {  "Es": -12.2, "Ep": -5.75, 
                 "ss-sigma": -1.938, "sp-sigma": 1.745,
                 "pp-sigma": 3.050, "pp-pi": -1.075 }
-
-
 
 
     hamiltonian = Hamiltonian(crl, ["1s","2px","2py","2pz"], bowler)
