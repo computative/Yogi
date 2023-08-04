@@ -6,6 +6,12 @@ class VisualTools:
     def line(self, idx):
         plt.plot([idx,idx],[-13.5,12.15], "k",linewidth=0.6)
 
+    @staticmethod
+    def reciprocal(a1,a2,a3):
+        A = np.array([a1,a2,a3]) # this is the transpose of [a1 a2 a3]
+        B = 2*np.pi*np.linalg.inv(A) # the columns are reciprocal vec.
+        return B[:,0], B[:,1], B[:,2]   
+
 
     @staticmethod
     def bands(bands):
@@ -47,10 +53,19 @@ class VisualTools:
             past = item
         return k_norepeated
 
-
+    @staticmethod
+    def fcc_sympts(b1,b2,b3):
+        return {
+            "Gamma": 0*b1,
+            "X": b2,
+            "L": 0.5*(b1 + b2 + b3),
+            "W": 0.5*b1 + b2,
+            "U": 0.25*( b1 + 4*b2 + b3 ),
+            "K": 0.75*(b1 + b2)
+        }
 
     @staticmethod
-    def fcc_sympts(a):
+    def fcc_sympts2(a):
         return {
             "Gamma": c(0,0,0), 
             "X": c(0, 2*np.pi/a,0) ,
@@ -61,7 +76,7 @@ class VisualTools:
             }
 
     @staticmethod
-    def diamond_sympts(a):
+    def diamond_sympts2(a):
         return {
             "Gamma": c(0,0,0), 
             "X": c(2*np.pi/a, 0,0) ,

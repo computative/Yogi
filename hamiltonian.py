@@ -86,7 +86,9 @@ if __name__ == "__main__":
 
 
     from visualtools import VisualTools
-    sympts = VisualTools.fcc_sympts(a)
+    
+    a1,a2,a3 = rep[0], rep[1], rep[2]
+    sympts = VisualTools.fcc_sympts(*VisualTools.reciprocal(a1,a2,a3))
     kpath = {
         "waypts": [ sympts["K"], sympts["Gamma"],sympts["L"], sympts["K"]  ],
         "n" : [35,35,35]
