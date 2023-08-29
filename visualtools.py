@@ -56,7 +56,7 @@ class VisualTools:
     @staticmethod
     def fcc_sympts(b1,b2,b3):
         return {
-            "Gamma": 0*b1,
+            "Gamma": c(0,0,0),
             "X": b2,
             "L": 0.5*(b1 + b2 + b3),
             "W": 0.5*b1 + b2,
