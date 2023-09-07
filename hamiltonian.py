@@ -37,7 +37,7 @@ class Hamiltonian:
 if __name__ == "__main__":
     from crystal import Crystal
 
-    theta = np.pi/8
+    theta = np.pi/3
     Q = ar([[1,0,0],[0,np.cos(theta),-np.sin(theta)],[0,np.sin(theta),np.cos(theta)]])
     a = 5.431
     rep = [[a,0,0], [0,a,0], [0,0,a]]
@@ -52,8 +52,8 @@ if __name__ == "__main__":
         [3*a/4,3*a/4,a/4]
     ]}
 
-    #atoms = {"Si":[ np.dot(Q,ar(x)).tolist() for x in atoms["Si"] ]}
-    #rep = [ np.dot(Q,ar(x)).tolist() for x in rep]
+    atoms = {"Si":[ np.dot(Q,ar(x)).tolist() for x in atoms["Si"] ]}
+    rep = [ np.dot(Q,ar(x)).tolist() for x in rep]
 
     coords = {"rep" : rep, "atoms" : atoms}
 

@@ -1,5 +1,15 @@
 import numpy as np
-from vector import c
+
+
+class c(np.ndarray):
+    def __new__(cls, *args):
+        return np.array(args)
+
+    def __eq__(self,x,y):
+        if np.linalg.norm(x-y) < self.eps:
+            return True
+        return False
+
 
 class VisualTools:
 
@@ -90,3 +100,7 @@ class VisualTools:
         np.set_printoptions(threshold=np.inf)
         np.set_printoptions(linewidth=np.inf)
         np.set_printoptions(suppress=True)
+
+
+
+
