@@ -20,7 +20,7 @@ class Hamiltonian:
             for j in range(-num_neighbors, num_neighbors+1):
                 for k in range(-num_neighbors, num_neighbors+1):
                     self.neighbors.append(  np.dot(A, np.array([i, j, k]) ) )
-        R = atoms.get_positions()
+        R = atoms.get_positions(wrap=True)
         
         with Pool() as pool:
             param = np.array([param[key] for key in 
